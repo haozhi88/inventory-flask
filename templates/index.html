@@ -14,7 +14,11 @@ content %}
     {% for store in stores %}
     <tr>
       <th scope="row">{{ store.id }}</th>
-      <td>{{ store.name }}</td>
+      <td>
+        <a href="{{ url_for('edit_store', store_id=store.id) }}">{{
+          store.name
+        }}</a>
+      </td>
     </tr>
     {% endfor %}
   </tbody>
@@ -39,7 +43,7 @@ content %}
     {% endfor %}
   </tbody>
 </table>
-<br />
+<!-- <br />
 <h2>Products Info</h2>
 <table class="table">
   <thead>
@@ -62,5 +66,5 @@ content %}
     </tr>
     {% endfor %}
   </tbody>
-</table>
+</table> -->
 {% endblock %}

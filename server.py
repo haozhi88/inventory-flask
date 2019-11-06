@@ -19,14 +19,14 @@ def migrate():
 
 @app.route("/")
 def index():
-    stores = Store.select()
-    warehouses = Warehouse.select()
-    products = Product.select()
+    stores = Store.select().order_by(Store.id.asc())
+    warehouses = Warehouse.select().order_by(Warehouse.id.asc())
+    products = Product.select().order_by(Product.id.asc())
     return render_template('index.html', stores=stores, warehouses=warehouses, products=products)
 
 @app.route("/store", methods=["GET"])
 def store():
-    stores = Store.select()
+    stores = Store.select().order_by(Store.id.asc())
     return render_template('store.html', stores=stores)
 
 @app.route("/store/new", methods=["GET"])
@@ -39,32 +39,37 @@ def create_store():
     name = request.form.get('store_name')
     store = Store(name=name)
     if store.save():
-        print(f"New store created: {store.id}, {store.name}")
+        print(f"Create store successful: {store.id}, {store.name}")
         return redirect(url_for('store'))
     else:
-        return render_template('store.html', stores=stores, store=store)
+        print(f"Create store fail")
+        return render_template('store.html')
 
-@app.route('/store/<store_id>', methods=["GET", "POST"])
-def store_id(store_id):
-
-    # if request.method == "POST":
-    #     name = request.form.get('store_name')
-    #     print(f"debug store name: {name}")
-
-    # store = Store.get_or_none(store_id)
-    stores = Store.select().where(Store.id==store_id).limit(1)
-    if len(stores):
-        store = stores[0]
-        warehouses = store.warehouses
-        print(f"store id: {store_id}, store name: {store.name}")
-        return render_template('store_id.html', store=store, warehouses=warehouses)
+@app.route('/store/<store_id>', methods=["GET"])
+def edit_store(store_id):
+    store = Store.get_or_none(Store.id == store_id)
+    if store:
+        warehouses = store.warehouses        
     else:
-        store = None
-        return render_template('store_id.html', store=store)
+        warehouses = None
+    return render_template('edit_store.html', store=store, warehouses=warehouses)
+
+@app.route('/store/<store_id>/update', methods=["POST"])
+def update_store(store_id):
+    name = request.form.get('store_name')
+    store = Store.get_or_none(Store.id == store_id)
+    store.name = name
+    warehouses = store.warehouses
+    if store.save():
+        print(f"Edit store successful: {store.id}, {store.name}")
+        return redirect(url_for('store'))
+    else:
+        print(f"Edit store fail")
+        return render_template('edit_store.html', store_id=store.id)
 
 @app.route("/warehouse", methods=["GET", "POST"])
 def warehouse():
-    stores = Store.select()
+    stores = Store.select().order_by(Store.id.asc())
     if request.method == "POST":
         location = request.form.get('warehouse_location')
         store_id = request.form.get('store_id')
@@ -79,3 +84,7 @@ def warehouse():
 
 if __name__ == '__main__':
     app.run()
+
+# todo
+# 1. validate
+# 2. nav bar
