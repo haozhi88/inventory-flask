@@ -1,8 +1,9 @@
-from flask import Flask, render_template, request, redirect, url_for
+from flask import Flask, render_template, request, redirect, url_for, flash
 import peeweedbevolve
 from models import * 
 
 app = Flask(__name__)
+app.secret_key = b'_5#y2L"F4Q8z\n\xec]/'
 
 @app.before_request
 def before_request():
@@ -36,20 +37,20 @@ def new_store():
 @app.route("/store", methods=["POST"])
 def create_store():
     stores = Store.select()
-    name = request.form.get('delete_button')
+    name = request.form.get('store_name')
     store = Store(name=name)
     if store.save():
-        print(f"Create store successful: {store.id}, {store.name}")
+        flash('Create store successful', 'alert alert-primary')
         return redirect(url_for('store'))
     else:
-        print(f"Create store fail")
+        flash('Create store fail', 'alert alert-danger')
         return render_template('store.html')
 
 @app.route("/store/<store_id>/delete", methods=["POST"])
 def delete_store(store_id):
     store = Store.get_or_none(Store.id == store_id)
     store.delete_instance()
-    print(f"Delete store successful: {store_id}, {store.name}")
+    flash('Delete store successful', 'alert alert-primary')
     return redirect(url_for('store'))
 
 @app.route('/store/<store_id>', methods=["GET"])
@@ -68,10 +69,10 @@ def update_store(store_id):
     store.name = name
     warehouses = store.warehouses
     if store.save():
-        print(f"Edit store successful: {store.id}, {store.name}")
+        flash('Edit store successful', 'alert alert-primary')
         return redirect(url_for('store'))
     else:
-        print(f"Edit store fail")
+        flash('Edit store fail', 'alert alert-danger')
         return render_template('edit_store.html', store_id=store.id)
 
 @app.route("/warehouse", methods=["GET", "POST"])
@@ -83,9 +84,10 @@ def warehouse():
         store = Store.get_by_id(store_id)
         warehouse = Warehouse(location=location, store=store)
         if warehouse.save():
-            print(f"New warehouse created: {warehouse.id}, {warehouse.location}")
-            return redirect(url_for('warehouse'))
+            flash('Create warehouse successful', 'alert alert-primary')
+            return redirect(url_for('index'))
         else:
+            flash('Create warehouse fail', 'alert alert-danger')
             return render_template('warehouse.html', stores=stores, warehouse=warehouse)
     return render_template('warehouse.html', stores=stores)
 
@@ -94,4 +96,4 @@ if __name__ == '__main__':
 
 # todo
 # 1. validate
-# 2. nav bar
+# 2. delete on cascade
