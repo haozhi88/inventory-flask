@@ -24,18 +24,25 @@ def index():
     products = Product.select()
     return render_template('index.html', stores=stores, warehouses=warehouses, products=products)
 
-@app.route("/store", methods=["GET", "POST"])
+@app.route("/store", methods=["GET"])
 def store():
     stores = Store.select()
-    if request.method == "POST":
-        name = request.form.get('store_name')
-        store = Store(name=name)
-        if store.save():
-            print(f"New store created: {store.id}, {store.name}")
-            return redirect(url_for('store'))
-        else:
-            return render_template('store.html', stores=stores, store=store)
     return render_template('store.html', stores=stores)
+
+@app.route("/store/new", methods=["GET"])
+def new_store():
+    return render_template('new_store.html')
+
+@app.route("/store", methods=["POST"])
+def create_store():
+    stores = Store.select()
+    name = request.form.get('store_name')
+    store = Store(name=name)
+    if store.save():
+        print(f"New store created: {store.id}, {store.name}")
+        return redirect(url_for('store'))
+    else:
+        return render_template('store.html', stores=stores, store=store)
 
 @app.route('/store/<store_id>', methods=["GET", "POST"])
 def store_id(store_id):
