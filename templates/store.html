@@ -7,6 +7,7 @@ content %}
   <thead>
     <tr>
       <th scope="col">Store Name</th>
+      <th scope="col">No. of Warehouses</th>
       <th scope="col"></th>
     </tr>
   </thead>
@@ -18,6 +19,7 @@ content %}
           store.name
         }}</a>
       </td>
+      <td>{{ store.warehouses | length }}</td>
       <td>
         <form
           action="{{ url_for('delete_store', store_id=store.id) }}"

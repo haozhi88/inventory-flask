@@ -21,6 +21,30 @@
 
   <body>
     <div class="container">
+      <!-- Navbar starts here -->
+      <nav class="navbar navbar-expand-lg navbar-light bg-light">
+        <a class="navbar-brand" href="{{ url_for('index') }}">NEXT Inventory</a>
+        <button
+          class="navbar-toggler"
+          type="button"
+          data-toggle="collapse"
+          data-target="#navbarNavDropdown"
+          aria-controls="navbarNavDropdown"
+          aria-expanded="false"
+          aria-label="Toggle navigation"
+        >
+          <span class="navbar-toggler-icon"></span>
+        </button>
+        <div class="collapse navbar-collapse" id="navbarNavDropdown">
+          <ul class="navbar-nav">
+            <li class="nav-item">
+              <a class="nav-link" href="{{ url_for('store') }}">Store</a>
+            </li>
+          </ul>
+        </div>
+      </nav>
+      <br />
+      <!-- Navbar ends here -->
       {% block content %} {% endblock %}
     </div>
   </body>
