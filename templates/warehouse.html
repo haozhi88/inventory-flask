@@ -1,0 +1,29 @@
+{% extends "_layout.html" %} {% block title %} Warehouse {% endblock %} {% block
+content %}
+<h1>Warehouse Page</h1>
+
+<!-- Form starts here -->
+<form action="{{ url_for('warehouse') }}" method="POST">
+  <div class="form-group">
+    <label for="warehouseLocationInput">Warehouse Location</label>
+    <input
+      type="text"
+      class="form-control"
+      id="warehouseLocationInput"
+      name="warehouse_location"
+      placeholder="Enter location"
+    />
+  </div>
+  <div class="form-group">
+    <label for="storeID">Select store</label>
+    <select class="form-control" id="storeID" name="store_id">
+      <option disabled selected value>-- select a store --</option>
+      {% for store in stores %}
+      <option value="{{ store.id }}">{{ store.name }}</option>
+      {% endfor %}
+    </select>
+  </div>
+  <button type="submit" class="btn btn-primary">Add a warehouse</button>
+</form>
+<!-- Form ends here -->
+{% endblock %}
