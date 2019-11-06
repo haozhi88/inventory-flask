@@ -20,10 +20,23 @@ class BaseModel(pw.Model):
 class Store(BaseModel):
    name = pw.CharField(unique=True)
 
+   def validate(name):
+      if len(name) > 0:
+         store = Store.get_or_none(Store.name == name)
+         if not store:
+            return True      
+      return False
+
 class Warehouse(BaseModel):
-   # store = pw.ForeignKeyField(Store, backref='warehouses', unique=True, on_delete="CASCADE")
-   store = pw.ForeignKeyField(Store, backref='warehouses', on_delete="CASCADE")
+   store = pw.ForeignKeyField(Store, backref='warehouses', unique=True, on_delete="CASCADE")
    location = pw.TextField()
+
+   def validate(store, location):
+      if len(location) > 0:
+         store = Store.get_or_none(Store.id == store.id)
+         if not store:
+            return True
+      return False
 
 class Product(BaseModel):
    name = pw.CharField(index=True)

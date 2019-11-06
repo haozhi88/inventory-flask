@@ -39,13 +39,17 @@ def new_store():
 def create_store():
     stores = Store.select()
     name = request.form.get('store_name')
-    store = Store(name=name)
-    if store.save():
-        flash('Create store successful', 'alert alert-primary')
-        return redirect(url_for('store'))
+    if Store.validate(name):
+        store = Store(name=name)
+        if store.save():
+            flash('Create store successful', 'alert alert-primary')
+            return redirect(url_for('store'))
+        else:
+            flash('Create store fail', 'alert alert-danger')
+            return render_template('store.html')
     else:
-        flash('Create store fail', 'alert alert-danger')
-        return render_template('store.html')
+        flash('Store name is not appropriate', 'alert alert-danger')
+        return render_template('new_store.html')
 
 @app.route("/store/<store_id>/delete", methods=["POST"])
 def delete_store(store_id):
@@ -83,18 +87,23 @@ def warehouse():
         location = request.form.get('warehouse_location')
         store_id = request.form.get('store_id')
         store = Store.get_by_id(store_id)
-        warehouse = Warehouse(location=location, store=store)
-        if warehouse.save():
-            flash('Create warehouse successful', 'alert alert-primary')
-            return redirect(url_for('index'))
+        if Warehouse.validate(store):
+            warehouse = Warehouse(location=location, store=store)
+            if warehouse.save():
+                flash('Create warehouse successful', 'alert alert-primary')
+                return redirect(url_for('index'))
+            else:
+                flash('Create warehouse fail', 'alert alert-danger')
+                return render_template('warehouse.html', stores=stores, warehouse=warehouse)
         else:
-            flash('Create warehouse fail', 'alert alert-danger')
-            return render_template('warehouse.html', stores=stores, warehouse=warehouse)
+            flash('Cannot select this store or location is not appropriate', 'alert alert-danger')
+            return render_template('warehouse.html', stores=stores)
     return render_template('warehouse.html', stores=stores)
 
 if __name__ == '__main__':
     app.run()
 
 # todo
-# 1. validate
-# 2. delete on cascade
+# 1. validate -> how to remain values?
+# 2. delete on cascade -> how to add this feature halfway?
+# 3. error -> how to show proper error?
