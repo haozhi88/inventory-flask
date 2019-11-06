@@ -36,7 +36,7 @@ def new_store():
 @app.route("/store", methods=["POST"])
 def create_store():
     stores = Store.select()
-    name = request.form.get('store_name')
+    name = request.form.get('delete_button')
     store = Store(name=name)
     if store.save():
         print(f"Create store successful: {store.id}, {store.name}")
@@ -44,6 +44,13 @@ def create_store():
     else:
         print(f"Create store fail")
         return render_template('store.html')
+
+@app.route("/store/<store_id>/delete", methods=["POST"])
+def delete_store(store_id):
+    store = Store.get_or_none(Store.id == store_id)
+    store.delete_instance()
+    print(f"Delete store successful: {store_id}, {store.name}")
+    return redirect(url_for('store'))
 
 @app.route('/store/<store_id>', methods=["GET"])
 def edit_store(store_id):
