@@ -19,6 +19,15 @@ def after_request(response):
 def migrate(): 
     db.evolve(ignore_tables={'base_model'})
 
+# @app.cli.command()
+# def copy(): 
+#     warehouses = Warehouse.select()
+#     for warehouse in warehouses:
+#         warehouse.store = warehouse.store_backup
+#         warehouse.save()
+#         print(f"store: {warehouse.store.name}, store backup: {warehouse.store_backup.name}")
+#     print("Copy done")
+
 @app.route("/")
 def index():
     stores = Store.select().order_by(Store.id.asc())
@@ -46,7 +55,7 @@ def create_store():
             return redirect(url_for('store'))
         else:
             flash('Create store fail', 'alert alert-danger')
-            return render_template('store.html')
+            return render_template('store.html', stores)
     else:
         flash('Store name is not appropriate', 'alert alert-danger')
         return render_template('new_store.html')
@@ -104,6 +113,6 @@ if __name__ == '__main__':
     app.run()
 
 # todo
-# 1. validate -> how to remain values?
+# 1. validate -> how to remain values? Why validate at save instead of creation?
 # 2. delete on cascade -> how to add this feature halfway?
 # 3. error -> how to show proper error?

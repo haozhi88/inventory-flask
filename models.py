@@ -30,6 +30,7 @@ class Store(BaseModel):
 class Warehouse(BaseModel):
    store = pw.ForeignKeyField(Store, backref='warehouses', unique=True, on_delete="CASCADE")
    location = pw.TextField()
+   # store_backup = pw.ForeignKeyField(Store, backref='warehouses', unique=True, on_delete="CASCADE", null=True)
 
    def validate(store, location):
       if len(location) > 0:
