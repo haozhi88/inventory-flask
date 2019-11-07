@@ -58,7 +58,7 @@ def create_store():
         return redirect(url_for('store'))
     else:
         error_to_flash(store.errors)
-        return render_template('new_store.html', errors=store.errors)
+        return render_template('new_store.html', store_name=name)
 
 @app.route("/store/<store_id>/delete", methods=["POST"])
 def delete_store(store_id):
@@ -74,20 +74,26 @@ def edit_store(store_id):
         warehouses = store.warehouses        
     else:
         warehouses = None
-    return render_template('edit_store.html', store=store, warehouses=warehouses)
+    return render_template('edit_store.html', store=store, warehouses=warehouses, store_name=store.name)
 
 @app.route('/store/<store_id>/update', methods=["POST"])
 def update_store(store_id):
     name = request.form.get('store_name')
     store = Store.get_or_none(Store.id == store_id)
+    if store.name == name:
+        flash('Edit store successful', 'alert alert-primary')
+        return redirect(url_for('edit_store', store_id=store.id))
+
+    backup_store_name = store.name
     store.name = name
     warehouses = store.warehouses
     if store.save():
         flash('Edit store successful', 'alert alert-primary')
-        return redirect(url_for('store'))
+        return redirect(url_for('edit_store', store_id=store.id))
     else:
+        store.name = backup_store_name
         error_to_flash(store.errors)
-        return render_template('edit_store.html', store_id=store.id)
+        return render_template('edit_store.html', store=store, warehouses=warehouses, store_name=name)
 
 @app.route("/warehouse", methods=["GET", "POST"])
 def warehouse():
